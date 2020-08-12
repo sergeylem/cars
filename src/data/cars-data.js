@@ -1,7 +1,7 @@
-import data from '../data/data.json';
+import cars from './cars.json';
 
 const CARS = {
-  data: data,
+  data: cars,
   rndImages: [0, 0, 0, 0], //Хранятся индексы data 4-х картинок
   questionIndex: 0,
   maxArray: 29,

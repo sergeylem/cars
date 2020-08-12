@@ -1,27 +1,38 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.css'
 import getFourRndImages from './components/getFourRndImages';
 import PlaySound from './components/playSound';
-import cars from './data/cars-state';
+import cars from './data/cars-data';
 
-class App extends Component {
+const App = () => {
 
-  state = cars;
+  const [data, setData] = useState(cars.data);
+  const [maxArray, setMaxArray] = useState(cars.maxArray);
+  const [rndImages, setRndImages] = useState(cars.rndImages);
+  const [questionIndex, setQuestionIndex] = useState(cars.questionIndex);
+  const [correctAnswer, setCorrectAnswer] = useState(cars.correctAnswer);
+  const [playResultAnswer, setPlayResultAnswer] = useState(cars.playResultAnswer);
+  const [playError, setPlayError] = useState(cars.playError);
+  const [countCorrectAnswer, setCountCorrectAnswer] = useState(cars.countCorrectAnswer);
+  const [countWrongAnswer, setCountWrongAnswer] = useState(cars.countWrongAnswer);
+  const [playQuestion, setPlayQuestion] = useState(cars.playQuestion);
+  const [gameOver, setGameOver] = useState(cars.gameOver);
 
-  componentDidMount() {
-    this.initialState(this.state.maxArray);
-  }
 
-  initialState = (maxArray) => {
-    const rndIndexes = getFourRndImages(maxArray); //Получить 4 случайных индекса из массива cars         
+  useEffect(() => initialState(), []);
+
+  initialState = () => {
+    const rndIndexes = getFourRndImages(cars.maxArray); //Получить 4 случайных индекса из массива cars         
     const questionIndex = Math.floor(Math.random() * 4); //Индекс озвученной картинки 
-    this.setState({ rndImages: rndIndexes, questionIndex: questionIndex }); //Запомнить 4 картинки и индекс озвученной картинки 
+    setRndImages(rndIndexes); //Запомнить 4 картинки 
+    setQuestionIndex(questionIndex); //Запомнить индекс озвученной картинки
+    //    this.setState({ rndImages: rndIndexes, questionIndex: questionIndex }); //Запомнить 4 картинки и индекс озвученной картинки 
   }
 
   changeCars = (buttonIndex) => {
-    let tmpArray = this.state.cars;  //cars записываю во временный массив 
-    const rndImages = this.state.rndImages; //ХРАНЯТСЯ ИНДЕКСЫ!
-    const maxArray = this.state.maxArray;
+    let tmpArray = cars.data;  //cars записываю во временный массив 
+    const rndImages = cars.rndImages; //ХРАНЯТСЯ ИНДЕКСЫ!
+    const maxArray = cars.maxArray;
     const idImage = tmpArray[rndImages[buttonIndex]].id; //Нахожу картинку по индексу кнопки
 
     const imageIndex = tmpArray.findIndex(idImg => idImg.id === idImage); //Нахожу индекс картинки в cars по картинке
@@ -30,39 +41,58 @@ class App extends Component {
     const rndIndexes = getFourRndImages(maxArray - 1); //Получить 4 случайных индекса из массива cars
     const questionIndex = Math.floor(Math.random() * 4); //Индекс озвученной картинки 
 
-    this.setState({
-      cars: tmpArray, maxArray: (maxArray - 1), rndImages: rndIndexes, questionIndex: questionIndex,
-      correctAnswer: false, playResultAnswer: false
-    });
+    setData(tmpArray);
+    setMaxArray(maxArray - 1);
+    setRndImages(rndIndexes);
+    setQuestionIndex(questionIndex);
+    setCorrectAnswer(false);
+    setPlayResultAnswer(false);
+
+    // this.setState({
+    //   data: tmpArray, maxArray: (maxArray - 1), rndImages: rndIndexes, questionIndex: questionIndex,
+    //   correctAnswer: false, playResultAnswer: false
+    // });
   };
 
   checkAnswer = (buttonIndex) => {
-    if (buttonIndex === this.state.questionIndex) {
-      if (this.state.cars.length > 4) {
-        this.setState({ questionIndex: buttonIndex, correctAnswer: true, playResultAnswer: true, playError: false, countCorrectAnswer: this.state.countCorrectAnswer + 1 });
+    if (buttonIndex === cars.questionIndex) {
+      if (cars.data.length > 4) {
+        setQuestionIndex(buttonIndex);
+        setCorrectAnswer(true);
+        setPlayResultAnswer(true);
+        setPlayError(false);
+        setCountCorrectAnswer(cars.countCorrectAnswer + 1);
+
+        // this.setState({ questionIndex: buttonIndex, correctAnswer: true, playResultAnswer: true, playError: false, countCorrectAnswer: this.state.countCorrectAnswer + 1 });
       }
       else {
-        this.setState({ gameOver: true }); //        alert("УРА! ФАНФАРЫ!");
+        setGameOver(true);  //        alert("УРА! ФАНФАРЫ!");
+        // this.setState({ gameOver: true }); //        alert("УРА! ФАНФАРЫ!");
       }
     }
     else {
-      this.setState((state) => ({ correctAnswer: false, playResultAnswer: true, playError: !state.playError, countWrongAnswer: this.state.countWrongAnswer + 1 }));
+      setCorrectAnswer(false);
+      setPlayResultAnswer(true);
+      setPlayError( !cars.playError );
+      setCountWrongAnswer(cars.countWrongAnswer + 1);
+
+      // this.setState((state) => ({ correctAnswer: false, playResultAnswer: true, playError: !state.playError, countWrongAnswer: this.state.countWrongAnswer + 1 }));
     }
   };
 
   repeatAnswer = () => {
-    this.setState((state) => ({ playQuestion: !state.playQuestion }));
+    setPlayQuestion( !cars.playQuestion )
+    // this.setState((state) => ({ playQuestion: !state.playQuestion }));
   };
 
 
-  render() {
     let nextBtn = false;
     let playQuestion, playSound, playGameOver;
 
-    if (this.state.playResultAnswer === true) {
-      if (this.state.correctAnswer === false) {
+    if (cars.playResultAnswer === true) {
+      if (cars.correctAnswer === false) {
         nextBtn = false;
-        if (this.state.playError === true) {
+        if (cars.playError === true) {
           playSound = (<PlaySound urlStr="/assets/sounds/e1.mp3" />);
 
         } else {
@@ -74,19 +104,19 @@ class App extends Component {
       };
     }
 
-    if (this.state.playQuestion === true) {
+    if (cars.playQuestion === true) {
       playQuestion = (
-        <PlaySound urlStr={this.state.data[this.state.rndImages[this.state.questionIndex]].sound} />
+        <PlaySound urlStr={cars.data[cars.rndImages[cars.questionIndex]].sound} />
       );
     }
     else {
       playQuestion = (//Включил <div>, чтобы был рендеринг 
         <div>
-          <PlaySound urlStr={this.state.cars[this.state.rndImages[this.state.questionIndex]].sound} />
+          <PlaySound urlStr={cars.data[cars.rndImages[cars.questionIndex]].sound} />
         </div>
       );
     }
-    if (this.state.gameOver === true) {
+    if (cars.gameOver === true) {
       playGameOver = (
         <PlaySound urlStr="/assets/sounds/s1.wav" />
       );
@@ -100,38 +130,38 @@ class App extends Component {
         <div className="container2">
           <img
             className='image-btn'
-            onClick={() => this.checkAnswer(0)}
-            src={this.state.data[this.state.rndImages[0]].img}
+            onClick={() => checkAnswer(0)}
+            src={cars.data[cars.rndImages[0]].img}
             alt="Image1" />
           <img
             className='image-btn'
-            onClick={() => this.checkAnswer(1)}
-            src={this.state.data[this.state.rndImages[1]].img}
+            onClick={() => checkAnswer(1)}
+            src={cars.data[cars.rndImages[1]].img}
             alt="Image2" />
           <img
             className='next-repeat-btn'
-            onClick={() => this.repeatAnswer()}
+            onClick={() => repeatAnswer()}
             // src={require('/assets/arrows/speaker1.png')}
             src="/assets/arrows/speaker1.png"
             alt="ImageRepeat" />
         </div>
         <div className="container3">
-          <h5>{this.state.countCorrectAnswer} : {this.state.countWrongAnswer}</h5>
+          <h5>{cars.countCorrectAnswer} : {cars.countWrongAnswer}</h5>
         </div>
         <div className="container2">
           <img
             className='image-btn'
-            onClick={() => this.checkAnswer(2)}
-            src={this.state.data[this.state.rndImages[2]].img}
+            onClick={() => checkAnswer(2)}
+            src={cars.data[cars.rndImages[2]].img}
             alt="Image3" />
           <img
             className='image-btn'
-            onClick={() => this.checkAnswer(3)}
-            src={this.state.data[this.state.rndImages[3]].img}
+            onClick={() => checkAnswer(3)}
+            src={cars.data[cars.rndImages[3]].img}
             alt="Image4" />
           <img
             className={nextBtn ? "next-repeat-btn" : "next-repeat-btn-disabled"}
-            onClick={nextBtn ? () => this.changeCars(this.state.questionIndex) :
+            onClick={nextBtn ? () => changeCars(cars.questionIndex) :
               null}
             // src={require('/assets/arrows/arrow2.png')}
             src="/assets/arrows/arrow2.png"
@@ -139,7 +169,6 @@ class App extends Component {
         </div>
       </div>
     );
-  }
 }
 
 export default App;
