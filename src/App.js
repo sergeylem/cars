@@ -6,8 +6,6 @@ import cars from './data/cars-data';
 
 const App = () => {
 
-  //window.soundManager.setup({ debugMode: false }); //disable logs at react-sound
-
   const [data, setData] = useState(cars.data);
   const [maxArray, setMaxArray] = useState(cars.maxArray);
   const [rndImages, setRndImages] = useState(cars.rndImages);
@@ -114,9 +112,9 @@ const App = () => {
   }
   else {
     playSoundQuestion = (//Включил <div>, чтобы был рендеринг 
-      <div>
+      <React.Fragment>
         <PlaySound urlStr={data[rndImages[questionIndex]].sound} />
-      </div>
+      </React.Fragment>
     );
   }
   if (gameOver === true) {
