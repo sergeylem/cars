@@ -27,7 +27,6 @@ const App = () => {
     const questionIndex = Math.floor(Math.random() * 4); //Индекс озвученной картинки 
     setRndImages(rndIndexes); //Запомнить 4 картинки 
     setQuestionIndex(questionIndex); //Запомнить индекс озвученной картинки
-    //    this.setState({ rndImages: rndIndexes, questionIndex: questionIndex }); //Запомнить 4 картинки и индекс озвученной картинки 
   }
 
   const changeCars = (buttonIndex) => {
@@ -48,11 +47,6 @@ const App = () => {
     setQuestionIndex(_questionIndex);
     setCorrectAnswer(false);
     setPlayResultAnswer(false);
-
-    // this.setState({
-    //   data: tmpArray, maxArray: (maxArray - 1), rndImages: rndIndexes, questionIndex: questionIndex,
-    //   correctAnswer: false, playResultAnswer: false
-    // });
   };
 
   const checkAnswer = (buttonIndex) => {
@@ -63,12 +57,9 @@ const App = () => {
         setPlayResultAnswer(true);
         setPlayError(false);
         setCountCorrectAnswer(countCorrectAnswer + 1);
-
-        // this.setState({ questionIndex: buttonIndex, correctAnswer: true, playResultAnswer: true, playError: false, countCorrectAnswer: this.state.countCorrectAnswer + 1 });
       }
       else {
         setGameOver(true);  //        alert("УРА! ФАНФАРЫ!");
-        // this.setState({ gameOver: true }); //        alert("УРА! ФАНФАРЫ!");
       }
     }
     else {
@@ -76,14 +67,11 @@ const App = () => {
       setPlayResultAnswer(true);
       setPlayError(!playError);
       setCountWrongAnswer(countWrongAnswer + 1);
-
-      // this.setState((state) => ({ correctAnswer: false, playResultAnswer: true, playError: !state.playError, countWrongAnswer: this.state.countWrongAnswer + 1 }));
     }
   };
 
   const repeatAnswer = () => {
     setPlayQuestion(!playQuestion)
-    // this.setState((state) => ({ playQuestion: !state.playQuestion }));
   };
 
 
